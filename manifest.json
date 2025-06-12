@@ -1,7 +1,7 @@
 {
   "name": "URLアクセス/検索アプリ",
   "short_name": "URLアプリ",
-  "description": "URLへのアクセスまたはGoogle検索を行うアプリ",
+  "description": "URLへのアクセスまたは検索を行うアプリ",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f0f0f0",
