@@ -13,9 +13,9 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif; /* Googleがよく使うフォント */
+            font-family: Arial, sans-serif; /* フォント */
             background-color: #fff; /* 真っ白な背景 */
-            color: #202124; /* Googleのテキスト色 */
+            color: #202124; /* テキスト色 */
         }
 
         .main-content {
@@ -25,11 +25,11 @@
             padding-bottom: 100px; /* 下部に少し余白 */
         }
 
-        .google-logo {
+        .logo {
             margin-bottom: 30px; /* ロゴの下の余白 */
         }
 
-        .google-logo img {
+        .logo img {
             /* ロゴ画像のサイズに合わせて調整してください */
             /* 例: width: 272px; height: 92px; */
             max-width: 100%; /* 親要素の幅に合わせて最大幅を設定 */
@@ -38,9 +38,9 @@
         }
 
         .search-container {
-            width: 582px; /* Google検索ボックスの標準的な幅 */
+            width: 582px; /* 検索ボックスの標準的な幅 */
             max-width: 90%; /* レスポンシブ対応 */
-            box-shadow: 0 1px 6px rgba(32,33,36,.28); /* Googleの検索ボックスの影 */
+            box-shadow: 0 1px 6px rgba(32,33,36,.28); /* 検索ボックスの影 */
             border-radius: 24px; /* 丸みを帯びた角 */
             border: 1px solid #dfe1e5; /* 薄いボーダー */
             display: flex;
@@ -115,15 +115,66 @@
             font-size: 14px;
         }
 
-        /* フッターのようなスペース */
-        .footer-space {
-            position: absolute;
-            bottom: 0;
+        /* パスワード入力オーバーレイのスタイル */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 50px; /* Googleのフッターがあるようなスペース */
-            background-color: #f2f2f2;
-            border-top: 1px solid #dadce0;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* 半透明の黒 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* 最前面に表示 */
         }
+
+        .password-prompt {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-prompt h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #202124;
+        }
+
+        .password-prompt input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            margin-bottom: 20px;
+            border: 1px solid #dfe1e5;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .password-prompt button {
+            background-color: #4285f4; /*  Blue */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .password-prompt button:hover {
+            background-color: #357ae8;
+        }
+
+        #passwordMessage {
+            color: #ea4335;
+            margin-top: 15px;
+        }
+
 
         /* Material Iconsの読み込みとスタイル */
         @font-face {
@@ -154,8 +205,17 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <div class="main-content">
-        <div class="google-logo">
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-prompt">
+            <h2>アクセスするにはパスワードを入力してください</h2>
+            <input type="password" id="passwordInput" placeholder="パスワード">
+            <button onclick="checkPassword()">認証</button>
+            <p id="passwordMessage"></p>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent" style="display: none;">
+        <div class="-logo">
             <img src="logo.png" alt="あなたのロゴ">
             </div>
 
@@ -174,10 +234,56 @@
     </div>
 
     <script>
+        // 設定するパスワード
+        const CORRECT_PASSWORD = "abcdef"; // ★★★ ここにあなたのパスワードを設定してください ★★★
+        const AUTH_KEY = "isAuthenticated"; // ローカルストレージのキー
+
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordMessage = document.getElementById('passwordMessage');
+        const mainContent = document.getElementById('mainContent');
+
         const urlInput = document.getElementById('urlInput');
         const searchContainer = document.getElementById('searchContainer');
         const message = document.getElementById('message');
 
+        // ページロード時に認証状態をチェック
+        window.onload = function() {
+            if (localStorage.getItem(AUTH_KEY) === "true") {
+                // 認証済みであればオーバーレイを非表示にし、メインコンテンツを表示
+                passwordOverlay.style.display = 'none';
+                mainContent.style.display = 'flex';
+            } else {
+                // 未認証であればオーバーレイを表示し、メインコンテンツを非表示
+                passwordOverlay.style.display = 'flex';
+                mainContent.style.display = 'none';
+                passwordInput.focus(); // パスワード入力欄にフォーカス
+            }
+        };
+
+        function checkPassword() {
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                localStorage.setItem(AUTH_KEY, "true"); // 認証済みとしてローカルストレージに記録
+                passwordOverlay.style.display = 'none'; // オーバーレイを非表示に
+                mainContent.style.display = 'flex';     // メインコンテンツを表示
+                passwordInput.value = ''; // パスワード入力欄をクリア
+                message.textContent = ''; // メッセージをクリア
+            } else {
+                passwordMessage.textContent = 'パスワードが間違っています。';
+                passwordInput.value = ''; // 間違っていたらクリア
+                passwordInput.focus(); // 再度入力欄にフォーカス
+            }
+        }
+
+        // パスワード入力欄でEnterキーが押されたら認証を試みる
+        passwordInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+
+        // 以下、元の検索機能に関するJavaScript
         urlInput.addEventListener('focus', () => {
             searchContainer.classList.add('focused');
         });
@@ -203,15 +309,15 @@
                 if (!/^https?:\/\//i.test(urlToAccess)) {
                     urlToAccess = 'http://' + urlToAccess;
                 }
-                window.open(urlToAccess, '_self'); // ここが変更点: '_blank' から '_self' へ
+                window.open(urlToAccess, '_self');
                 message.textContent = ''; // メッセージをクリア
             } else {
                 if (isFeelingLucky) {
                     const googleSearchUrl = `https://www.google.com/search?btnI&q=${encodeURIComponent(inputVal)}`;
-                    window.open(googleSearchUrl, '_self'); // ここが変更点: '_blank' から '_self' へ
+                    window.open(googleSearchUrl, '_self');
                 } else {
                     const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(inputVal)}`;
-                    window.open(googleSearchUrl, '_self'); // ここが変更点: '_blank' から '_self' へ
+                    window.open(SearchUrl, '_self');
                 }
                 message.textContent = ''; // メッセージをクリア
             }
