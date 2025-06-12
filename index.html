@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URLアクセス/検索アプリ</title>
-    <link rel="manifest" href="manifest.json">
+    <title>URLアクセス/検索アプリ</title> <link rel="manifest" href="manifest.json">
     <style>
         body {
             display: flex;
@@ -13,23 +12,23 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif; /* フォント */
+            font-family: Arial, sans-serif; /* Googleがよく使うフォント */
             background-color: #fff; /* 真っ白な背景 */
-            color: #202124; /* テキスト色 */
+            color: #202124; /* Googleのテキスト色 */
         }
 
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 150px; /* 下部に少し余白 */
+            padding-bottom: 100px; /* 下部に少し余白 */
         }
 
-        .logo {
+        .custom-logo { /* クラス名を変更 */
             margin-bottom: 30px; /* ロゴの下の余白 */
         }
 
-        .logo img {
+        .custom-logo img { /* クラス名を変更 */
             /* ロゴ画像のサイズに合わせて調整してください */
             /* 例: width: 272px; height: 92px; */
             max-width: 100%; /* 親要素の幅に合わせて最大幅を設定 */
@@ -156,7 +155,7 @@
         }
 
         .password-prompt button {
-            background-color: #4285f4; /*  Blue */
+            background-color: #4285f4; /* ブルー系 */
             color: white;
             border: none;
             padding: 12px 25px;
@@ -215,9 +214,7 @@
     </div>
 
     <div class="main-content" id="mainContent" style="display: none;">
-        <div class="-logo">
-            <img src="logo.png" alt="あなたのロゴ">
-            </div>
+        <div class="custom-logo"> <img src="logo.png" alt="サイトロゴ"> </div>
 
         <div class="search-container" id="searchContainer">
             <span class="material-icons search-icon">search</span>
@@ -227,9 +224,7 @@
         </div>
 
         <div class="button-group">
-            <button onclick="accessOrSearch()">検索</button>
-            <button onclick="accessOrSearch(true)">I'm Feeling Lucky</button>
-        </div>
+            <button onclick="accessOrSearch()">検索</button> <button onclick="accessOrSearch(true)">ラッキー</button> </div>
         <p id="message"></p>
     </div>
 
@@ -296,7 +291,7 @@
             const inputVal = urlInput.value.trim();
 
             if (inputVal === '') {
-                message.textContent = '何か入力してください。';
+                message.textContent = '';
                 return;
             }
 
@@ -313,11 +308,12 @@
                 message.textContent = ''; // メッセージをクリア
             } else {
                 if (isFeelingLucky) {
-                    const googleSearchUrl = `https://www.google.com/search?btnI&q=${encodeURIComponent(inputVal)}`;
-                    window.open(googleSearchUrl, '_self');
+                    // 「I'm Feeling Lucky」の代わりに、検索結果の最初のページに直接移動する挙動を再現
+                    const searchUrl = `https://www.google.com/search?btnI&q=${encodeURIComponent(inputVal)}`;
+                    window.open(searchUrl, '_self');
                 } else {
-                    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(inputVal)}`;
-                    window.open(SearchUrl, '_self');
+                    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(inputVal)}`;
+                    window.open(searchUrl, '_self');
                 }
                 message.textContent = ''; // メッセージをクリア
             }
